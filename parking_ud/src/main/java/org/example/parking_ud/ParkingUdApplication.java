@@ -1,0 +1,13 @@
+package org.example.parking_ud;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class ParkingUdApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(ParkingUdApplication.class, args);
+	}
+
+}
