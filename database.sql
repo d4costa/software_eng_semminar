@@ -6,7 +6,7 @@
 
 /* Drop Tables */
 
-DROP TABLE IF EXISTS "Bicycle" CASCADE
+DROP TABLE IF EXISTS "bicycle" CASCADE
 ;
 
 DROP TABLE IF EXISTS checkin_logs CASCADE
@@ -15,12 +15,12 @@ DROP TABLE IF EXISTS checkin_logs CASCADE
 DROP TABLE IF EXISTS parking CASCADE
 ;
 
-DROP TABLE IF EXISTS "Usuario" CASCADE
+DROP TABLE IF EXISTS "usuario" CASCADE
 ;
 
 /* Create Tables */
 
-CREATE TABLE "Bicycle"
+CREATE TABLE "bicycle"
 (
 	bike_id smallint NOT NULL,
 	color varchar(50) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE checkin_logs
 (
 	log_id integer NOT NULL,
 	bike_id smallint NOT NULL,
-	event_type char(10) NOT NULL,
+	event_type varchar(10) NOT NULL,
 	user_id integer NOT NULL,
 	parking_id smallint NULL,
 	timestamp timestamp without time zone NOT NULL   DEFAULT CURRENT_TIMESTAMP
@@ -50,7 +50,7 @@ CREATE TABLE parking
 )
 ;
 
-CREATE TABLE "Usuario"
+CREATE TABLE "usuario"
 (
 	nombre varchar(50) NOT NULL,
 	apellido varchar(50) NOT NULL,
@@ -63,11 +63,11 @@ CREATE TABLE "Usuario"
 
 /* Create Primary Keys, Indexes, Uniques, Checks */
 
-ALTER TABLE "Bicycle" ADD CONSTRAINT "PK_Bicycle"
+ALTER TABLE "bicycle" ADD CONSTRAINT "PK_Bicycle"
 	PRIMARY KEY (bike_id)
 ;
 
-CREATE INDEX "IXFK_Bicycle_Usuario" ON "Bicycle" (user_id ASC)
+CREATE INDEX "IXFK_Bicycle_Usuario" ON "bicycle" (user_id ASC)
 ;
 
 ALTER TABLE checkin_logs ADD CONSTRAINT "PK_checkin_logs"
@@ -87,35 +87,35 @@ ALTER TABLE parking ADD CONSTRAINT "PK_parking"
 	PRIMARY KEY (parking_id)
 ;
 
-ALTER TABLE "Usuario" ADD CONSTRAINT "PK_Usuario"
+ALTER TABLE "usuario" ADD CONSTRAINT "PK_Usuario"
 	PRIMARY KEY (user_id)
 ;
 
-ALTER TABLE "Usuario" 
+ALTER TABLE "usuario" 
   ADD CONSTRAINT "UK_email" UNIQUE (email)
 ;
 
-ALTER TABLE "Usuario" 
+ALTER TABLE "usuario" 
   ADD CONSTRAINT "UK_student_id" UNIQUE (student_id)
 ;
 
-ALTER TABLE "Usuario" ADD CONSTRAINT "CK_email" CHECK (email ~ '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+ALTER TABLE "usuario" ADD CONSTRAINT "CK_email" CHECK (email ~ '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
 ;
 
-CREATE INDEX "IX_email" ON "Usuario" (email ASC)
+CREATE INDEX "IX_email" ON "usuario" (email ASC)
 ;
 
-CREATE INDEX "IX_studentID" ON "Usuario" (student_id ASC)
+CREATE INDEX "IX_studentID" ON "usuario" (student_id ASC)
 ;
 
 /* Create Foreign Key Constraints */
 
-ALTER TABLE "Bicycle" ADD CONSTRAINT "FK_Bicycle_Usuario"
-	FOREIGN KEY (user_id) REFERENCES "Usuario" (user_id) ON DELETE No Action ON UPDATE No Action
+ALTER TABLE "bicycle" ADD CONSTRAINT "FK_Bicycle_Usuario"
+	FOREIGN KEY (user_id) REFERENCES "usuario" (user_id) ON DELETE No Action ON UPDATE No Action
 ;
 
 ALTER TABLE checkin_logs ADD CONSTRAINT "FK_checkin_logs_Bicycle"
-	FOREIGN KEY (bike_id) REFERENCES "Bicycle" (bike_id) ON DELETE No Action ON UPDATE No Action
+	FOREIGN KEY (bike_id) REFERENCES "bicycle" (bike_id) ON DELETE No Action ON UPDATE No Action
 ;
 
 ALTER TABLE checkin_logs ADD CONSTRAINT "FK_checkin_logs_parking"
@@ -123,5 +123,5 @@ ALTER TABLE checkin_logs ADD CONSTRAINT "FK_checkin_logs_parking"
 ;
 
 ALTER TABLE checkin_logs ADD CONSTRAINT "FK_checkin_logs_Usuario"
-	FOREIGN KEY (user_id) REFERENCES "Usuario" (user_id) ON DELETE No Action ON UPDATE No Action
+	FOREIGN KEY (user_id) REFERENCES "usuario" (user_id) ON DELETE No Action ON UPDATE No Action
 ;
