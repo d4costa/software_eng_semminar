@@ -10,5 +10,5 @@ public class UsuarioService {
 
     @Autowired
     public UsuarioRepository usuarioRepository;
-    public BicycleRepository bicycleRepository;
+
 }

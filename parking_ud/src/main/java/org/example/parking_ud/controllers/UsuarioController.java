@@ -15,10 +15,13 @@ import java.util.Optional;
 public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
-    Usuario clienteObj;
-
+   public static Usuario clienteObj;
+// este método tiene una entrada en forma de un json con campos llamados "email" y "password"
+    // debe asignarse la respuesta de este método a un campo llamado UsuarioId en el localStorage del frontEnd,
+//  con el fin de poder usar este dato en otros endPoints
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping ("/login")
+
     public ResponseEntity<Integer> login(
             @RequestBody Usuario usuario
     ) {
@@ -36,24 +39,19 @@ public class UsuarioController {
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
-    @GetMapping("/register")
-    public boolean register(@RequestParam String nombre,
-                            @RequestParam String apellido,
-                            @RequestParam String contrasena,
-                            @RequestParam String email,
-                            @RequestParam String numero_id) {
+    @PostMapping("/register")
+    // este método tiene una entrada en forma de un json con campos llamados de forma consistente a los atributos de la clase Usuario
+    public boolean register(@RequestBody Usuario usuario) {
 
 
         try {
-            // System.out.println(registro.getApellido());
             Usuario clienteObj = new Usuario();
             clienteObj.setId(((int)usuarioService.usuarioRepository.count())+10001);
-            clienteObj.setNombre(nombre);
-            clienteObj.setApellido(apellido);
-            clienteObj.setPassword(contrasena);
-            clienteObj.setEmail(email);
-            BigDecimal numeroId = new BigDecimal(numero_id);
-            clienteObj.setStudentId(numeroId);
+            clienteObj.setNombre(usuario.getNombre());
+            clienteObj.setApellido(usuario.getApellido());
+            clienteObj.setPassword(usuario.getPassword());
+            clienteObj.setEmail(usuario.getEmail());
+            clienteObj.setStudentId(usuario.getStudentId());
 
 
             usuarioService.usuarioRepository.save(clienteObj);
@@ -68,43 +66,12 @@ public class UsuarioController {
 
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
-    @PostMapping("/registerBike")
-    public boolean registerBike(
-  @RequestBody Bicycle bike
-    ) {
-        try {
-            // Optional: check if user exists first
-            Optional<Usuario> usuarioOpt = usuarioService.usuarioRepository.findById(clienteObj.getId());
-            if (usuarioOpt.isEmpty()) {
-                System.out.println("User not found");
-                return false;
-            }
-
-            // Create new bike
-            Bicycle newbBike = new Bicycle();
-            newbBike.setId((short) (usuarioService.bicycleRepository.count() + 1));
-            newbBike.setColor(bike.getColor());
-            newbBike.setDescription(bike.getDescription());
-            newbBike.setBrand(bike.brand);
-            newbBike.setChasisCode(bike.chasisCode);
-            newbBike.setUser(usuarioOpt.get());
-
-            // Save
-            usuarioService.bicycleRepository.save(newbBike);
-
-            return true;
-
-        } catch (Exception e) {
-            System.out.println("Error registering bike: " + e.getMessage());
-            return false;
-        }
-    }
 
     @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping ("/cerrarsesion")
+    // al usar este método, debe limpiarse el localStorage de el frontEnd
     public  Integer cerrar() {
-        this.clienteObj = null;
+        UsuarioController.clienteObj = null;
         return  1;
     }
 
