@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="base.css" />
+  <title>Sign Up</title>
+</head>
+<body>
+<div class="header">
+  <div class="logo-container">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsXSB6f7fXdH8FCkqzKq6KVUVq6KWJnwx1Xg&s" alt="Escudo Universidad Distrital">
+  </div>
+</div>
+
+  <div class="container">
+    <form action="/signup" method="post">
+      <h2>Sign Up</h2>
+      <label>Student ID</label>
+      <input type="text" name="student_id" required />
+
+      <label>Name</label>
+      <input type="text" name="nombre" required />
+
+      <label>Last Name</label>
+      <input type="text" name="apellido" required />
+
+      <label>Password</label>
+      <input type="password" name="password" required />
+
+      <label>Email</label>
+      <input type="email" name="email" required />
+
+      <button type="submit">Sign Up</button>
+    </form>
+  </div>
+</body>
+</html>
