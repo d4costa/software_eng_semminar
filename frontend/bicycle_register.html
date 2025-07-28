@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="base.css" />
+  <title>Register Bicycle</title>
+</head>
+<body>
+<header><div class="header">
+  <div class="logo-container">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsXSB6f7fXdH8FCkqzKq6KVUVq6KWJnwx1Xg&s" alt="Escudo Universidad Distrital">
+  </div>
+  <div class="user-container">
+    <span class="user-name">Juan Pérez</span>
+    <button class="logout-btn">
+      Salir
+      <img src="https://cdn-icons-png.flaticon.com/512/59/59399.png" alt="Icono Salir">
+    </button>
+  </div>
+</div>
+</header>
+  <div class="container">
+    
+    <form action="/bicycle/register" method="post">
+      <h2>Bicycle Information</h2>
+      <label>Brand</label>
+      <input type="text" name="brand" required />
+
+      <label>Color</label>
+      <input type="text" name="color" required />
+
+      <label>Description</label>
+      <input type="text" name="description" required />
+
+      <label>Chassis Number</label>
+      <input type="text" name="chasis_code" required />
+
+      <button type="submit">Register</button>
+    </form>
+  </div>
+</body>
+</html>
