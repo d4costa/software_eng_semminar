@@ -5,6 +5,7 @@ import org.example.parking_ud.dao.Usuario;
 import org.example.parking_ud.dto.BicycleDTO;
 import org.example.parking_ud.services.BicycleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -29,10 +30,14 @@ public class BicycleController {
     //@CrossOrigin(origins = "http://localhost:5173")
     @CrossOrigin(origins = "*")
     @GetMapping("/getUserBike")
-    public BicycleDTO getUserBike(
+    public ResponseEntity<BicycleDTO> getUserBike(
             @RequestParam int usuario
     ) {
-        return bicycleService.getBike(usuario);
+        BicycleDTO bike = bicycleService.getBike(usuario);
+        if (bike == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(bike);
     }
 
 

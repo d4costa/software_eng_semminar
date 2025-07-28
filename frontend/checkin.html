@@ -1,32 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="base.css" />
-  <title>Check In</title>
-</head>
-<body>
-<header>
-<div class="header">
-  <div class="logo-container">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsXSB6f7fXdH8FCkqzKq6KVUVq6KWJnwx1Xg&s" alt="Escudo Universidad Distrital">
-  </div>
-  <div class="user-container">
-    <span class="user-name">Juan Pérez</span>
-    <button class="logout-btn">
-      Salir
-      <img src="https://cdn-icons-png.flaticon.com/512/59/59399.png" alt="Icono Salir">
-    </button>
-  </div>
-</div>
-</header>
-<div class="container">
-  <form action="/checkin" method="post" class="form-check">
-    <h2>Check In</h2>
-    <img src="https://cdn1.iconfinder.com/data/icons/things-3/24/qr-512.png" alt="Exit" class="form-icon" />
-    <button type="submit" class="form-button">Check In</button>
-  </form>
-</div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="base.css" />
+    <title>Check In</title>
+  </head>
+  <body>
+    <header>
+      <div class="header">
+        <div class="logo-container">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsXSB6f7fXdH8FCkqzKq6KVUVq6KWJnwx1Xg&s"
+            alt="Escudo Universidad Distrital"
+          />
+        </div>
+        <div class="user-container">
+          <span class="user-name" id="userName">Juan Pérez</span>
+          <button class="logout-btn" id="logoutBtn">
+            Salir
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/59/59399.png"
+              alt="Icono Salir"
+            />
+          </button>
+        </div>
+      </div>
+    </header>
+    <div class="container">
+      <form id="checkinForm" class="form-check">
+        <h2>Check In</h2>
+        <img
+          src="https://cdn1.iconfinder.com/data/icons/things-3/24/qr-512.png"
+          alt="Exit"
+          class="form-icon"
+        />
+        <button type="submit" id="checkButton" class="form-button">
+          Check In
+        </button>
+      </form>
+    </div>
+    <script>
+      const nombre = localStorage.getItem("nombre");
+      const apellido = localStorage.getItem("apellido");
+      const userId = localStorage.getItem("userId");
+      document.getElementById("userName").textContent = `${nombre} ${apellido}`;
+
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", async function () {
+          try {
+            const response = await fetch(
+              "http://localhost:8080/usuario/logout",
+              {
+                method: "GET",
+              }
+            );
+
+            if (!response.ok) {
+              console.warn("Logout request failed:", response.status);
+            }
+          } catch (error) {
+            console.error("Logout error:", error);
+          } finally {
+            localStorage.clear();
+            alert("logout successful!");
+            window.location.href = "/login.html";
+          }
+        });
+
+      document
+        .getElementById("checkButton")
+        .addEventListener("click", async function (e) {
+          e.preventDefault();
+
+          try {
+            const res = await fetch("http://localhost:8080/CheckIn", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userId: localStorage.getItem("userId"),
+                bikeId: localStorage.getItem("bike"),
+              }),
+            });
+
+            const message = await res.text();
+            alert(res.text);
+          } catch (error) {
+            document.getElementById("checkinMessage").textContent =
+              "Error en el Check In";
+          }
+        });
+    </script>
+  </body>
 </html>

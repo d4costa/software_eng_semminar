@@ -1,32 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="base.css" />
-  <title>Login</title>
-</head>
-<body>
-<div class="header">
-  <div class="logo-container">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsXSB6f7fXdH8FCkqzKq6KVUVq6KWJnwx1Xg&s" alt="Escudo Universidad Distrital">
-  </div>
-</div>
-  <div class="container">
-    
-    <form action="/login" method="post">
-      <h2>Sign In</h2>
-      <label>Email</label>
-      <input type="email" name="email" required />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="base.css" />
+    <title>Login</title>
+  </head>
+  <body>
+    <div class="header">
+      <div class="logo-container">
+        <img
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsXSB6f7fXdH8FCkqzKq6KVUVq6KWJnwx1Xg&s"
+          alt="Escudo Universidad Distrital"
+        />
+      </div>
+    </div>
+    <div class="container">
+      <form id="loginForm">
+        <h2>Sign In</h2>
+        <label>Email</label>
+        <input type="email" name="email" id="email" required />
 
-      <label>Password</label>
-      <input type="password" name="password" required />
+        <label>Password</label>
+        <input type="password" name="password" id="password" required />
 
-      <button type="submit">Sign In</button>
-      <a href="/forgot">Forgot Password?</a>
-      <a href="/signup">New User? Sign Up</a>
-    </form>
+        <button type="submit">Sign In</button>
+        <a href="/forgot">Forgot Password?</a>
+        <a href="/signup.html">New User? Sign Up</a>
+      </form>
+    </div>
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
 
-  </div>
-</body>
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+
+          try {
+            const loginResponse = await fetch(
+              "http://localhost:8080/usuario/login",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+              }
+            );
+
+            if (!loginResponse.ok) {
+              alert("Login failed. Please check your credentials.");
+              return;
+            }
+
+            const userData = await loginResponse.json(); // { id, nombre, apellido }
+
+            // ✅ Store in localStorage
+            localStorage.setItem("userId", userData.id);
+            localStorage.setItem("nombre", userData.nombre);
+            localStorage.setItem("apellido", userData.apellido);
+
+            // 🔁 Step 1: Check if user has a bike
+            const bikeRes = await fetch(
+              `http://localhost:8080/getUserBike?usuario=${userData.id}`
+            );
+            console.log(bikeRes);
+            if (!bikeRes.ok) {
+              window.location.href = "/bicycle_register.html";
+              return;
+            }
+
+            const bike = await bikeRes.json();
+            localStorage.setItem("bike", bike.id); // If needed later
+
+            // 🔁 Step 2: Check last log
+            const logRes = await fetch(
+              `http://localhost:8080/GetLastLog?userId=${userData.id}`
+            );
+            const logDecision = await logRes.text();
+
+            if (logDecision === "checkin") {
+              window.location.href = "/checkin.html";
+            } else {
+              window.location.href = "/checkout.html";
+            }
+          } catch (error) {
+            console.error("Login error:", error);
+            alert("An error occurred while logging in.");
+          }
+        });
+    </script>
+  </body>
 </html>

@@ -1,43 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="base.css" />
-  <title>Register Bicycle</title>
-</head>
-<body>
-<header><div class="header">
-  <div class="logo-container">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsXSB6f7fXdH8FCkqzKq6KVUVq6KWJnwx1Xg&s" alt="Escudo Universidad Distrital">
-  </div>
-  <div class="user-container">
-    <span class="user-name">Juan Pérez</span>
-    <button class="logout-btn">
-      Salir
-      <img src="https://cdn-icons-png.flaticon.com/512/59/59399.png" alt="Icono Salir">
-    </button>
-  </div>
-</div>
-</header>
-  <div class="container">
-    
-    <form action="/bicycle/register" method="post">
-      <h2>Bicycle Information</h2>
-      <label>Brand</label>
-      <input type="text" name="brand" required />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="base.css" />
+    <title>Register Bicycle</title>
+  </head>
+  <body>
+    <header>
+      <div class="header">
+        <div class="logo-container">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsXSB6f7fXdH8FCkqzKq6KVUVq6KWJnwx1Xg&s"
+            alt="Escudo Universidad Distrital"
+          />
+        </div>
+        <div class="user-container">
+          <span class="user-name">Juan Pérez</span>
+          <button class="logout-btn" id="logoutBtn">
+            Salir
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/59/59399.png"
+              alt="Icono Salir"
+            />
+          </button>
+        </div>
+      </div>
+    </header>
+    <div class="container">
+      <form id="bikeForm">
+        <h2>Bicycle Information</h2>
+        <label>Brand</label>
+        <input type="text" name="brand" id="brand" required />
 
-      <label>Color</label>
-      <input type="text" name="color" required />
+        <label>Color</label>
+        <input type="text" name="color" id="color" required />
 
-      <label>Description</label>
-      <input type="text" name="description" required />
+        <label>Description</label>
+        <input type="text" name="description" id="description" required />
 
-      <label>Chassis Number</label>
-      <input type="text" name="chasis_code" required />
+        <label>Chassis Number</label>
+        <input type="text" name="chasis_code" id="chasis_code" required />
 
-      <button type="submit">Register</button>
-    </form>
-  </div>
-</body>
+        <button type="submit" id="register_btn">Register</button>
+      </form>
+    </div>
+    <script>
+      // Show user's full name from localStorage
+      const nombre = localStorage.getItem("nombre");
+      const apellido = localStorage.getItem("apellido");
+      const userId = localStorage.getItem("userId");
+      //document.getElementById("userName").textContent = `${nombre} ${apellido}`;
+
+      // Logout handler
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", async function () {
+          try {
+            const response = await fetch(
+              "http://localhost:8080/usuario/logout",
+              {
+                method: "GET",
+              }
+            );
+
+            if (!response.ok) {
+              console.warn("Logout request failed:", response.status);
+            }
+          } catch (error) {
+            console.error("Logout error:", error);
+          } finally {
+            localStorage.clear();
+            window.location.href = "/login.html";
+          }
+        });
+
+      // Handle form submission
+      document
+        .getElementById("register_btn")
+        .addEventListener("click", async function (e) {
+          e.preventDefault();
+          const form = document.getElementById("bikeForm");
+          const data = {
+            brand: form.brand.value,
+            color: form.color.value,
+            description: form.description.value,
+            chasisCode: form.chasis_code.value,
+            userId: userId, // Send user ID from localStorage
+          };
+          console.log(data);
+          try {
+            alert("trying");
+            const res = await fetch(
+              "http://localhost:8080/bicycle/registerBike",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+              }
+            );
+
+            if (res.ok) {
+              alert("Your Bike has been registered");
+              const resBike = await fetch(
+                "http://localhost:8080/bicycle/getUserBike",
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(data),
+                }
+              );
+              localStorage.setItem("bike", resBike.id);
+              window.location.href = "/checkin.html"; // Redirect after success
+            } else {
+              const text = await res.text();
+              alert("An error has ocurred: " + text);
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Hubo un problema al registrar la bicicleta.");
+          }
+        });
+    </script>
+  </body>
 </html>

@@ -73,7 +73,7 @@ public class UsuarioController {
 
     //@CrossOrigin(origins = "http://localhost:5173")
     @CrossOrigin(origins = "*")
-    @GetMapping ("/cerrarsesion")
+    @GetMapping ("/logout")
     // al usar este método, debe limpiarse el localStorage de el frontEnd
     public  Integer cerrar() {
         UsuarioController.clienteObj = null;

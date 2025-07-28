@@ -1,38 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="base.css" />
-  <title>Sign Up</title>
-</head>
-<body>
-<div class="header">
-  <div class="logo-container">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsXSB6f7fXdH8FCkqzKq6KVUVq6KWJnwx1Xg&s" alt="Escudo Universidad Distrital">
-  </div>
-</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="base.css" />
+    <title>Sign Up</title>
+  </head>
+  <body>
+    <div class="header">
+      <div class="logo-container">
+        <img
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsXSB6f7fXdH8FCkqzKq6KVUVq6KWJnwx1Xg&s"
+          alt="Escudo Universidad Distrital"
+        />
+      </div>
+    </div>
 
-  <div class="container">
-    <form action="/signup" method="post">
-      <h2>Sign Up</h2>
-      <label>Student ID</label>
-      <input type="text" name="student_id" required />
+    <div class="container">
+      <form id="signupForm">
+        <h2>Sign Up</h2>
+        <label>Student ID</label>
+        <input type="text" name="student_id" required />
 
-      <label>Name</label>
-      <input type="text" name="nombre" required />
+        <label>Name</label>
+        <input type="text" name="nombre" required />
 
-      <label>Last Name</label>
-      <input type="text" name="apellido" required />
+        <label>Last Name</label>
+        <input type="text" name="apellido" required />
 
-      <label>Password</label>
-      <input type="password" name="password" required />
+        <label>Password</label>
+        <input type="password" name="password" required />
 
-      <label>Email</label>
-      <input type="email" name="email" required />
+        <label>Email</label>
+        <input type="email" name="email" required />
 
-      <button type="submit">Sign Up</button>
-    </form>
-  </div>
-</body>
+        <button type="submit" id="signUpButton">Sign Up</button>
+      </form>
+    </div>
+  </body>
+  <script>
+    document
+      .getElementById("signUpButton")
+      .addEventListener("click", async function (e) {
+        e.preventDefault(); // Prevent regular form submission
+
+        const form = document.getElementById("signupForm");
+
+        const userData = {
+          studentId: form.student_id.value,
+          nombre: form.nombre.value,
+          apellido: form.apellido.value,
+          password: form.password.value,
+          email: form.email.value,
+        };
+        console.log(userData);
+        try {
+          const response = await fetch(
+            "http://localhost:8080/usuario/register",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(userData),
+            }
+          );
+
+          const result = await response.json();
+
+          if (result === true) {
+            // Registration successful
+            alert("User registered successfully!");
+            window.location.href = "/login.html";
+          } else {
+            document.getElementById("signupResult").textContent =
+              "Registration failed. Try again.";
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          document.getElementById("signupResult").textContent =
+            "Error registering user.";
+        }
+      });
+  </script>
 </html>
