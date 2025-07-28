@@ -13,7 +13,8 @@ public class BicycleController {
     @Autowired
     BicycleService bicycleService;
 
-    @CrossOrigin(origins = "http://localhost:5173")
+    //@CrossOrigin(origins = "http://localhost:5173")
+    @CrossOrigin(origins = "*")
     @PostMapping("/registerBike")
     // este método debe recibir un json con campos nombrados de forma consistente con los atributos de la clase Bicycle
     //
@@ -25,7 +26,8 @@ public class BicycleController {
 
 // la respuesta de este método debe asingarse a un campo del localStorage del FrontEnd, dicho dato se usará para enviar
 //las peticiones de checkIn
-    @CrossOrigin(origins = "http://localhost:5173")
+    //@CrossOrigin(origins = "http://localhost:5173")
+    @CrossOrigin(origins = "*")
     @GetMapping("/getUserBike")
     public BicycleDTO getUserBike(
             @RequestParam int usuario

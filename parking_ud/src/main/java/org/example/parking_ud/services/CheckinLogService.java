@@ -76,4 +76,15 @@ public class CheckinLogService {
         }    }
 
 
+    public ResponseEntity<String> getLastLog(int userId) {
+
+        Optional<CheckinLog> lastLog = checkinLogRepository.findTopByUserIdOrderByTimestampDesc(userId);
+
+        if (!lastLog.isPresent() || lastLog.get().getEventType().equalsIgnoreCase("check out")) {
+            return ResponseEntity.ok("checkin"); // User should check in
+        } else {
+            return ResponseEntity.ok("checkout"); // User should check out
+        }
+
+    }
 }

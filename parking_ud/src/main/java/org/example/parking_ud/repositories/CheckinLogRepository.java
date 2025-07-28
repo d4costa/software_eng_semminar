@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface CheckinLogRepository extends JpaRepository<CheckinLog, Integer> {
     Optional<CheckinLog> findTopByBikeIdOrderByTimestampDesc(short bikeId);
-   // Optional<CheckinLog> findTopByUserIdOrderByTimestampDesc(short userId);
+    Optional<CheckinLog> findTopByUserIdOrderByTimestampDesc(int userId);
 }

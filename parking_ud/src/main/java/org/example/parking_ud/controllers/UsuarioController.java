@@ -1,5 +1,6 @@
 package org.example.parking_ud.controllers;
 
+import org.example.parking_ud.dto.UsuarioDto;
 import org.example.parking_ud.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,10 +20,11 @@ public class UsuarioController {
 // este método tiene una entrada en forma de un json con campos llamados "email" y "password"
     // debe asignarse la respuesta de este método a un campo llamado UsuarioId en el localStorage del frontEnd,
 //  con el fin de poder usar este dato en otros endPoints
-    @CrossOrigin(origins = "http://localhost:5173")
+    //@CrossOrigin(origins = "http://localhost:5173")
+    @CrossOrigin(origins = "*")
     @PostMapping ("/login")
 
-    public ResponseEntity<Integer> login(
+    public ResponseEntity<UsuarioDto> login(
             @RequestBody Usuario usuario
     ) {
         Optional<Usuario> cliente = usuarioService.usuarioRepository.findByEmail(usuario.getEmail());
@@ -31,14 +33,16 @@ public class UsuarioController {
 
             clienteObj = cliente.get();
             System.out.println(cliente.get().getId());
-            return ResponseEntity.ok(cliente.get().getId()); // Retorna ID con status 200
+             UsuarioDto usuarioObj = new UsuarioDto(clienteObj.getId(), clienteObj.getNombre(), clienteObj.getApellido());
+            return ResponseEntity.ok(usuarioObj); // Retorna ID con status 200
 
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Credenciales inválidas
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
+   // @CrossOrigin(origins = "http://localhost:5173")
+   @CrossOrigin(origins = "*")
     @PostMapping("/register")
     // este método tiene una entrada en forma de un json con campos llamados de forma consistente a los atributos de la clase Usuario
     public boolean register(@RequestBody Usuario usuario) {
@@ -67,7 +71,8 @@ public class UsuarioController {
     }
 
 
-    @CrossOrigin(origins = "http://localhost:5173")
+    //@CrossOrigin(origins = "http://localhost:5173")
+    @CrossOrigin(origins = "*")
     @GetMapping ("/cerrarsesion")
     // al usar este método, debe limpiarse el localStorage de el frontEnd
     public  Integer cerrar() {
