@@ -16,7 +16,7 @@
           />
         </div>
         <div class="user-container">
-          <span class="user-name">Juan Pérez</span>
+          <span class="user-name" id="userName"></span>
           <button class="logout-btn" id="logoutBtn">
             Salir
             <img
@@ -50,7 +50,7 @@
       const nombre = localStorage.getItem("nombre");
       const apellido = localStorage.getItem("apellido");
       const userId = localStorage.getItem("userId");
-      //document.getElementById("userName").textContent = `${nombre} ${apellido}`;
+      document.getElementById("userName").textContent = `${nombre} ${apellido}`;
 
       // Logout handler
       document
@@ -91,25 +91,19 @@
           console.log(data);
           try {
             alert("trying");
-            const res = await fetch(
-              "http://localhost:8080/bicycle/registerBike",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-              }
-            );
+            const res = await fetch("http://localhost:8080/registerBike", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data),
+            });
 
             if (res.ok) {
               alert("Your Bike has been registered");
-              const resBike = await fetch(
-                "http://localhost:8080/bicycle/getUserBike",
-                {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(data),
-                }
-              );
+              const resBike = await fetch("http://localhost:8080/getUserBike", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+              });
               localStorage.setItem("bike", resBike.id);
               window.location.href = "/checkin.html"; // Redirect after success
             } else {
