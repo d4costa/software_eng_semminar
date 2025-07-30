@@ -1,33 +1,47 @@
 package org.example.parking_ud.services;
 
-import org.example.parking_ud.controllers.UsuarioController;
 import org.example.parking_ud.dao.Bicycle;
 import org.example.parking_ud.dao.CheckinLog;
 import org.example.parking_ud.dao.Parking;
 import org.example.parking_ud.dao.Usuario;
-import org.example.parking_ud.repositories.BicycleRepository;
 import org.example.parking_ud.repositories.CheckinLogRepository;
+import org.example.parking_ud.repositories.ParkingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
 public class CheckinLogService {
     @Autowired
     public  CheckinLogRepository checkinLogRepository;
+    @Autowired
+    public ParkingRepository parkingRepository;
     public ResponseEntity<String> checkIn(Integer userId,short bikeId) {
         try {
-            // Optional: check if the bike is already checked in and not checked out
             Optional<CheckinLog> lastLog = checkinLogRepository.findTopByBikeIdOrderByTimestampDesc(bikeId);
             //Optional<Bicycle> userBicycle = checkinLogRepository.findTopByUserIdOrderByTimestampDesc();
             if (lastLog.isPresent() && lastLog.get().getEventType().equalsIgnoreCase("check in")) {
                 return ResponseEntity.badRequest().body("Bike already checked in.");
             }
+
+            short parkingId = 1;
+
+            Optional<Parking> parkingOpt = parkingRepository.findById(parkingId);
+            if (!parkingOpt.isPresent()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking not found");
+            }
+
+            Parking parking = parkingOpt.get();
+            if (parking.getAvCapacity() <= 0) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Parking is full");
+            }
+
+
+
             Usuario usr = new Usuario();
             usr.setId(userId);
             Bicycle ObjBicycle = new Bicycle();
@@ -43,6 +57,10 @@ public class CheckinLogService {
             log.setTimestamp(Instant.now());
 
             checkinLogRepository.save(log);
+            // Update parking capacity
+            parking.setAvCapacity((short)(parking.getAvCapacity() - 1));
+            parkingRepository.save(parking);
+
             return ResponseEntity.ok("Bike checked in successfully.");
 
         } catch (Exception e) {
@@ -61,6 +79,7 @@ public class CheckinLogService {
 
 
             CheckinLog log = new CheckinLog();
+            Parking parking = lastLog.get().getParking();
             log.setId((int)(checkinLogRepository.count() + 1));
             log.setBike(lastLog.get().getBike());
             log.setUser(lastLog.get().getUser());
@@ -69,6 +88,9 @@ public class CheckinLogService {
             log.setTimestamp(Instant.now());
 
             checkinLogRepository.save(log);
+            parking.setAvCapacity((short)(parking.getAvCapacity() + 1));
+            parkingRepository.save(parking);
+
             return ResponseEntity.ok("Bike checked out successfully.");
 
         } catch (Exception e) {

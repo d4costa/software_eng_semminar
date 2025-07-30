@@ -1,7 +1,6 @@
 package org.example.parking_ud.controllers;
 
 import org.example.parking_ud.dto.CheckRequest;
-import org.example.parking_ud.repositories.CheckinLogRepository;
 import org.example.parking_ud.services.CheckinLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +10,6 @@ import org.springframework.web.bind.annotation.*;
 public class CheckinLogController {
     @Autowired
     CheckinLogService checkinLogService;
-    @Autowired
-    private CheckinLogRepository checkinLogRepository;
-
     // @CrossOrigin(origins = "http://localhost:5173")
    @CrossOrigin(origins = "*")
     @PostMapping ("/CheckIn")

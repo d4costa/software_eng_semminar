@@ -18,6 +18,12 @@ public class Parking {
     @Column(name = "parking_id", nullable = false)
     private Short id;
 
+    @Column(name = "max_capacity", nullable = false)
+    private Short capacity;
+
+    @Column(name = "available_capacity", nullable = false)
+    private Short avCapacity;
+
     @Size(max = 50)
     @NotNull
     @Column(name = "parking_name", nullable = false, length = 50)

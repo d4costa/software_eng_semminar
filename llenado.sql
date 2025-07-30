@@ -5,8 +5,8 @@ VALUES
 ('Carlos', 'Rodríguez', 'carlos.rod@example.com', 202310003, 'mypassword', 3);
 
 -- Insertar parqueadero de Ingeniería
-INSERT INTO parking (parking_id, parking_name, parking_location)
-VALUES (1, 'Ingeniería', 'Edificio Principal - Piso 1');
+INSERT INTO parking (parking_id, parking_name, parking_location,available_capacity, max_capacity)
+VALUES (1, 'Ingeniería', 'Edificio Principal - Piso 1',200,200);
 
 -- Insertar 3 bicicletas (una por usuario)
 INSERT INTO "bicycle" (bike_id, color, description, brand, chasis_code, user_id)
