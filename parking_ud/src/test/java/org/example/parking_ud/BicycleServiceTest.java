@@ -1,4 +1,4 @@
-package org.example.parking_ud.services;
+package org.example.parking_ud;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,6 +11,7 @@ import org.example.parking_ud.dao.Usuario;
 import org.example.parking_ud.dto.BicycleDTO;
 import org.example.parking_ud.repositories.BicycleRepository;
 import org.example.parking_ud.repositories.UsuarioRepository;
+import org.example.parking_ud.services.BicycleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -79,7 +80,7 @@ class BicycleServiceTest {
     // Caso 7: Usuario con ID inválido
     @Test
     void register_InvalidUserId_ReturnsFalse() {
-        validBikeDTO.userId = null;
+        validBikeDTO.userId = Integer.parseInt(null);
         assertFalse(bicycleService.register(validBikeDTO));
     }
 

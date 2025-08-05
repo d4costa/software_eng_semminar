@@ -1,4 +1,4 @@
-package org.example.parking_ud.services;
+package org.example.parking_ud;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.example.parking_ud.dao.Usuario;
 import org.example.parking_ud.dto.UsuarioDto;
 import org.example.parking_ud.repositories.UsuarioRepository;
+import org.example.parking_ud.services.UsuarioService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

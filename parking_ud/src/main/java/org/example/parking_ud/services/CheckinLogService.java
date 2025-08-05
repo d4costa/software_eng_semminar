@@ -4,6 +4,7 @@ import org.example.parking_ud.dao.Bicycle;
 import org.example.parking_ud.dao.CheckinLog;
 import org.example.parking_ud.dao.Parking;
 import org.example.parking_ud.dao.Usuario;
+import org.example.parking_ud.dto.CheckLogDTO;
 import org.example.parking_ud.repositories.CheckinLogRepository;
 import org.example.parking_ud.repositories.ParkingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +22,12 @@ public class CheckinLogService {
     public  CheckinLogRepository checkinLogRepository;
     @Autowired
     public ParkingRepository parkingRepository;
+
+    public  List<CheckLogDTO> getLogs(int userId) {
+        return  checkinLogRepository.findLogsByUserId(userId);
+
+    }
+
     public ResponseEntity<String> checkIn(Integer userId,int bikeId,short parkingId) {
         try {
             Optional<CheckinLog> lastLog = checkinLogRepository.findTopByBikeIdOrderByTimestampDesc(bikeId);
