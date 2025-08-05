@@ -4,117 +4,117 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import java.time.Instant;
 import java.util.Optional;
 
 import org.example.parking_ud.dao.Bicycle;
+import org.example.parking_ud.dao.CheckinLog;
+import org.example.parking_ud.dao.Parking;
 import org.example.parking_ud.dao.Usuario;
-import org.example.parking_ud.dto.BicycleDTO;
-import org.example.parking_ud.repositories.BicycleRepository;
-import org.example.parking_ud.repositories.UsuarioRepository;
-import org.junit.jupiter.api.BeforeEach;
+import org.example.parking_ud.repositories.CheckinLogRepository;
+import org.example.parking_ud.repositories.ParkingRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
-class BicycleServiceTest {
+class CheckinLogServiceTest {
 
-    @Mock private BicycleRepository bicycleRepository;
-    @Mock private UsuarioRepository usuarioRepository;
+    @Mock private CheckinLogRepository checkinLogRepository;
+    @Mock private ParkingRepository parkingRepository;
     
-    @InjectMocks private BicycleService bicycleService;
-    
-    private BicycleDTO validBikeDTO;
-    private Usuario validUser;
+    @InjectMocks private CheckinLogService checkinLogService;
 
-    @BeforeEach
-    void setUp() {
-        validBikeDTO = new BicycleDTO();
-        validBikeDTO.userId = 1;
-        validBikeDTO.color = "Rojo";
-        validBikeDTO.description = "Bicicleta de montaña";
-        validBikeDTO.brand = "Trek";
-        validBikeDTO.chasisCode = "CH12345";
+    // Caso: Check-in exitoso
+    @Test
+    void checkIn_Success_ReturnsOk() {
+        when(checkinLogRepository.findTopByBikeIdOrderByTimestampDesc(anyInt()))
+            .thenReturn(Optional.empty());
         
-        validUser = new Usuario();
-        validUser.setId(1);
-    }
-
-    // Caso 1: Registro exitoso
-    @Test
-    void register_ValidBikeAndUser_ReturnsTrue() {
-        when(usuarioRepository.findById(1)).thenReturn(Optional.of(validUser));
-        when(bicycleRepository.count()).thenReturn(5L);
-        when(bicycleRepository.save(any())).thenReturn(new Bicycle());
+        Parking parking = new Parking();
+        parking.setAvCapacity((short) 10);
+        when(parkingRepository.findById(anyShort())).thenReturn(Optional.of(parking));
         
-        assertTrue(bicycleService.register(validBikeDTO));
-        verify(bicycleRepository).save(any());
+        ResponseEntity<String> response = checkinLogService.checkIn(1, 1, (short) 1);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
-    // Caso 2: Usuario no encontrado
+    // Caso: Bicicleta ya registrada
     @Test
-    void register_UserNotFound_ReturnsFalse() {
-        when(usuarioRepository.findById(anyInt())).thenReturn(Optional.empty());
-        assertFalse(bicycleService.register(validBikeDTO));
-    }
-
-    // Caso 3: Error al guardar
-    @Test
-    void register_SaveThrowsException_ReturnsFalse() {
-        when(usuarioRepository.findById(1)).thenReturn(Optional.of(validUser));
-        when(bicycleRepository.save(any())).thenThrow(new RuntimeException("DB Error"));
-        assertFalse(bicycleService.register(validBikeDTO));
-    }
-
-    // Caso 6: Datos inválidos (campos nulos)
-    @Test
-    void register_NullFields_ReturnsFalse() {
-        BicycleDTO invalidDTO = new BicycleDTO();
-        invalidDTO.userId = 1; // Solo ID presente
-        assertFalse(bicycleService.register(invalidDTO));
-    }
-
-    // Caso 7: Usuario con ID inválido
-    @Test
-    void register_InvalidUserId_ReturnsFalse() {
-        validBikeDTO.userId = null;
-        assertFalse(bicycleService.register(validBikeDTO));
-    }
-
-    // Caso 4: Obtener bicicleta existente
-    @Test
-    void getBike_ValidUserWithBike_ReturnsBicycleDTO() {
-        Bicycle bike = new Bicycle();
-        bike.setColor("Azul");
-        when(bicycleRepository.findByUser_id(1)).thenReturn(Optional.of(bike));
+    void checkIn_AlreadyCheckedIn_ReturnsBadRequest() {
+        CheckinLog lastLog = new CheckinLog();
+        lastLog.setEventType("check in");
         
-        BicycleDTO result = bicycleService.getBike(1);
-        assertEquals("Azul", result.color);
-    }
-
-    // Caso 5: No existe bicicleta
-    @Test
-    void getBike_NoBikeAssociated_ReturnsNull() {
-        when(bicycleRepository.findByUser_id(anyInt())).thenReturn(Optional.empty());
-        assertNull(bicycleService.getBike(1));
-    }
-
-    // Caso 8: Bicicleta con campos vacíos
-    @Test
-    void getBike_BikeWithEmptyFields_ReturnsDTOWithNulls() {
-        Bicycle bike = new Bicycle();
-        bike.setDescription(null);
-        when(bicycleRepository.findByUser_id(1)).thenReturn(Optional.of(bike));
+        when(checkinLogRepository.findTopByBikeIdOrderByTimestampDesc(anyInt()))
+            .thenReturn(Optional.of(lastLog));
         
-        BicycleDTO result = bicycleService.getBike(1);
-        assertNull(result.description);
+        ResponseEntity<String> response = checkinLogService.checkIn(1, 1, (short) 1);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
-    // Caso 9: ID de usuario inexistente
+    // Caso: Parqueadero lleno
     @Test
-    void getBike_InvalidUserId_ReturnsNull() {
-        assertNull(bicycleService.getBike(null));
+    void checkIn_ParkingFull_ReturnsConflict() {
+        when(checkinLogRepository.findTopByBikeIdOrderByTimestampDesc(anyInt()))
+            .thenReturn(Optional.empty());
+        
+        Parking parking = new Parking();
+        parking.setAvCapacity((short) 0);
+        when(parkingRepository.findById(anyShort())).thenReturn(Optional.of(parking));
+        
+        ResponseEntity<String> response = checkinLogService.checkIn(1, 1, (short) 1);
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    }
+
+    // Caso: Check-out exitoso
+    @Test
+    void checkOut_Success_ReturnsOk() {
+        CheckinLog lastLog = new CheckinLog();
+        lastLog.setEventType("check in");
+        Parking parking = new Parking();
+        parking.setAvCapacity((short) 5);
+        lastLog.setParking(parking);
+        
+        when(checkinLogRepository.findTopByBikeIdOrderByTimestampDesc(anyInt()))
+            .thenReturn(Optional.of(lastLog));
+        
+        ResponseEntity<String> response = checkinLogService.checkOut(1);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    // Caso: Bicicleta no ingresada
+    @Test
+    void checkOut_NotCheckedIn_ReturnsBadRequest() {
+        when(checkinLogRepository.findTopByBikeIdOrderByTimestampDesc(anyInt()))
+            .thenReturn(Optional.empty());
+        
+        ResponseEntity<String> response = checkinLogService.checkOut(1);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    // Caso: GetLastLog debería hacer check-in
+    @Test
+    void getLastLog_ShouldCheckIn_ReturnsCheckin() {
+        when(checkinLogRepository.findTopByUserIdOrderByTimestampDesc(anyInt()))
+            .thenReturn(Optional.empty());
+        
+        ResponseEntity<String> response = checkinLogService.getLastLog(1);
+        assertEquals("checkin", response.getBody());
+    }
+
+    // Caso: GetLastLog debería hacer check-out
+    @Test
+    void getLastLog_ShouldCheckOut_ReturnsCheckout() {
+        CheckinLog log = new CheckinLog();
+        log.setEventType("check in");
+        when(checkinLogRepository.findTopByUserIdOrderByTimestampDesc(anyInt()))
+            .thenReturn(Optional.of(log));
+        
+        ResponseEntity<String> response = checkinLogService.getLastLog(1);
+        assertEquals("checkout", response.getBody());
     }
 }
