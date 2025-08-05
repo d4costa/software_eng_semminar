@@ -26,11 +26,13 @@ class UsuarioServiceTest {
     @Test
     void login_ValidCredentials_ReturnsUserDto() {
         Usuario dbUser = new Usuario();
+        dbUser.setEmail("example@email.com");
         dbUser.setPassword("validPassword");
         
         when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.of(dbUser));
         
         Usuario input = new Usuario();
+        input.setEmail("example@email.com");
         input.setPassword("validPassword");
         
         UsuarioDto result = usuarioService.login(input);
@@ -41,12 +43,14 @@ class UsuarioServiceTest {
     @Test
     void login_InvalidPassword_ReturnsNull() {
         Usuario dbUser = new Usuario();
+        dbUser.setEmail("example@email.com");
         dbUser.setPassword("validPassword");
         
         when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.of(dbUser));
         
         Usuario input = new Usuario();
         input.setPassword("wrongPassword");
+        input.setEmail("example@email.com");
         
         assertNull(usuarioService.login(input));
     }
@@ -71,7 +75,7 @@ class UsuarioServiceTest {
         
         Usuario user = new Usuario();
         user.setEmail("duplicate@example.com");
-        
+        user.setPassword("validPassword");
         assertFalse(usuarioService.register(user));
     }
 

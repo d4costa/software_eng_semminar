@@ -31,9 +31,16 @@ public class UsuarioService {
     }
 
     public boolean register(Usuario usuario) {
-
+        if (usuario.getEmail() == null || usuario.getEmail().isEmpty()) {
+            return false;
+        }
+        if (usuario.getPassword() == null || usuario.getPassword().isEmpty()) {
+            return false;
+        }
 
         try {
+            Optional<Usuario> existUser = usuarioRepository.findByEmail(usuario.getEmail());
+            if (existUser.isPresent()) {return false;};
             Usuario clienteObj = new Usuario();
             clienteObj.setId(((int)usuarioRepository.count())+10001);
             clienteObj.setNombre(usuario.getNombre());

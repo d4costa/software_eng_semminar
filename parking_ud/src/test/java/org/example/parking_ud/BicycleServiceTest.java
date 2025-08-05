@@ -80,7 +80,7 @@ class BicycleServiceTest {
     // Caso 7: Usuario con ID inválido
     @Test
     void register_InvalidUserId_ReturnsFalse() {
-        validBikeDTO.userId = Integer.parseInt(null);
+        validBikeDTO.userId = -1;
         assertFalse(bicycleService.register(validBikeDTO));
     }
 
