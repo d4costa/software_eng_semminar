@@ -15,15 +15,16 @@ public class BicycleController {
     //@CrossOrigin(origins = "http://localhost:5173")
     @CrossOrigin(origins = "*")
     @PostMapping("/registerBike")
-    // este método debe recibir un json con campos nombrados de forma consistente con los atributos de la clase Bicycle
     //
-    public boolean registerBike(
-            @RequestBody Bicycle bike
+    public ResponseEntity<Boolean> registerBike(
+            @RequestBody BicycleDTO bike
     ) {
-        return bicycleService.register(bike);
+        boolean res = bicycleService.register(bike);
+        if (res){
+        return ResponseEntity.ok(res);}
+        else return ResponseEntity.badRequest().body(res);
     }
 
-// la respuesta de este método debe asingarse a un campo del localStorage del FrontEnd, dicho dato se usará para enviar
 //las peticiones de checkIn
     //@CrossOrigin(origins = "http://localhost:5173")
     @CrossOrigin(origins = "*")

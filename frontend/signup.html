@@ -40,9 +40,9 @@
   </body>
   <script>
     document
-      .getElementById("signUpButton")
-      .addEventListener("click", async function (e) {
-        e.preventDefault(); // Prevent regular form submission
+      .getElementById("signupForm")
+      .addEventListener("submit", async function (e) {
+        e.preventDefault();
 
         const form = document.getElementById("signupForm");
 
@@ -67,14 +67,13 @@
           );
 
           const result = await response.json();
-
+          console.log(result);
           if (result === true) {
             // Registration successful
             alert("User registered successfully!");
             window.location.href = "/login.html";
           } else {
-            document.getElementById("signupResult").textContent =
-              "Registration failed. Try again.";
+            alert("User registration failed,  try again!");
           }
         } catch (error) {
           console.error("Error:", error);

@@ -2,5 +2,7 @@ package org.example.parking_ud.dto;
 
 public class CheckRequest {
     public int userId;
-    public short bikeId;
+    public int bikeId;
+    public short parkingId;
+
 }

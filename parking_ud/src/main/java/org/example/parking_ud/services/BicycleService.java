@@ -6,6 +6,7 @@ import org.example.parking_ud.dao.Bicycle;
 import org.example.parking_ud.dao.Usuario;
 import org.example.parking_ud.dto.BicycleDTO;
 import org.example.parking_ud.repositories.BicycleRepository;
+import org.example.parking_ud.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +16,13 @@ import java.util.Optional;
 public class BicycleService {
     @Autowired
     public BicycleRepository bicycleRepository;
-    public  boolean register(Bicycle bike){
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    public  boolean register(BicycleDTO bike){
         try {
-            // Optional: check if user exists first
-            Optional<Usuario> usuarioOpt = Optional.ofNullable(UsuarioController.clienteObj);
+            Optional<Usuario> usuarioOpt = (usuarioRepository.findById(bike.userId));
             if (usuarioOpt.isEmpty()) {
                 System.out.println("User not found");
                 return false;
@@ -27,8 +31,8 @@ public class BicycleService {
             // Create new bike
             Bicycle newbBike = new Bicycle();
             newbBike.setId((short) (bicycleRepository.count() + 1));
-            newbBike.setColor(bike.getColor());
-            newbBike.setDescription(bike.getDescription());
+            newbBike.setColor(bike.color);
+            newbBike.setDescription(bike.description);
             newbBike.setBrand(bike.brand);
             newbBike.setChasisCode(bike.chasisCode);
             newbBike.setUser(usuarioOpt.get());

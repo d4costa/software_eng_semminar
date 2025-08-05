@@ -20,7 +20,7 @@ public class CheckinLogService {
     public  CheckinLogRepository checkinLogRepository;
     @Autowired
     public ParkingRepository parkingRepository;
-    public ResponseEntity<String> checkIn(Integer userId,short bikeId) {
+    public ResponseEntity<String> checkIn(Integer userId,int bikeId,short parkingId) {
         try {
             Optional<CheckinLog> lastLog = checkinLogRepository.findTopByBikeIdOrderByTimestampDesc(bikeId);
             //Optional<Bicycle> userBicycle = checkinLogRepository.findTopByUserIdOrderByTimestampDesc();
@@ -28,7 +28,7 @@ public class CheckinLogService {
                 return ResponseEntity.badRequest().body("Bike already checked in.");
             }
 
-            short parkingId = 1;
+
 
             Optional<Parking> parkingOpt = parkingRepository.findById(parkingId);
             if (!parkingOpt.isPresent()) {
@@ -68,7 +68,7 @@ public class CheckinLogService {
         }
     }
 
-    public ResponseEntity<String> checkOut(short bikeId) {
+    public ResponseEntity<String> checkOut(int bikeId) {
         try {
             // Optional: check if the bike is already checked in and not checked out
             Optional<CheckinLog> lastLog = checkinLogRepository.findTopByBikeIdOrderByTimestampDesc(bikeId);

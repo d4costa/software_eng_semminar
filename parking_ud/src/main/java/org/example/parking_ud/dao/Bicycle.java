@@ -13,7 +13,7 @@ import lombok.Setter;
 public class Bicycle {
     @Id
     @Column(name = "bike_id", nullable = false)
-    public Short id;
+    public int id;
 
     @Size(max = 50)
     @NotNull

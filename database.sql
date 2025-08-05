@@ -22,7 +22,7 @@ DROP TABLE IF EXISTS usuario CASCADE
 
 CREATE TABLE bicycle
 (
-	bike_id smallint NOT NULL,
+	bike_id integer NOT NULL,
 	color varchar(50) NOT NULL,
 	description varchar(50) NOT NULL,
 	brand varchar(50) NOT NULL,
@@ -34,10 +34,10 @@ CREATE TABLE bicycle
 CREATE TABLE checkin_logs
 (
 	log_id integer NOT NULL,
-	bike_id smallint NOT NULL,
-	event_type char(10) NOT NULL,
+	bike_id integer NOT NULL,
+	event_type varchar(10) NOT NULL,
 	user_id integer NOT NULL,
-	parking_id smallint NULL,
+	parking_id smallint NOT NULL,
 	timestamp timestamp without time zone NOT NULL   DEFAULT CURRENT_TIMESTAMP
 )
 ;

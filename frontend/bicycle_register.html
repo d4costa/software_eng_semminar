@@ -77,8 +77,8 @@
 
       // Handle form submission
       document
-        .getElementById("register_btn")
-        .addEventListener("click", async function (e) {
+        .getElementById("bikeForm")
+        .addEventListener("submit", async function (e) {
           e.preventDefault();
           const form = document.getElementById("bikeForm");
           const data = {
@@ -99,11 +99,9 @@
 
             if (res.ok) {
               alert("Your Bike has been registered");
-              const resBike = await fetch("http://localhost:8080/getUserBike", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-              });
+              const resBike = await fetch(
+                `http://localhost:8080/getUserBike?userId=${data.userid}`
+              );
               localStorage.setItem("bike", resBike.id);
               window.location.href = "/checkin.html"; // Redirect after success
             } else {

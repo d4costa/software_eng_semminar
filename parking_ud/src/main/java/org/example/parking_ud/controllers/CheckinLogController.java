@@ -13,22 +13,19 @@ public class CheckinLogController {
     // @CrossOrigin(origins = "http://localhost:5173")
    @CrossOrigin(origins = "*")
     @PostMapping ("/CheckIn")
-    // para los parámetros de este método, se requiere usar campos del localStorge,
     public ResponseEntity<String> CheckIn(@RequestBody CheckRequest checkRequest) {
-       System.out.println(checkRequest.bikeId +" "+ checkRequest.userId);
-        return checkinLogService.checkIn(checkRequest.userId, checkRequest.bikeId);
+      // System.out.println(checkRequest.bikeId +" "+ checkRequest.userId);
+        return checkinLogService.checkIn(checkRequest.userId, checkRequest.bikeId,checkRequest.parkingId);
     }
     //@CrossOrigin(origins = "http://localhost:5173")
     @CrossOrigin(origins = "*")
     @PostMapping("/CheckOut")
-    // para los parámetros de este método, se requiere usar campos del localStorge,
     public ResponseEntity<String> CheckOut( @RequestBody CheckRequest checkRequest ){
         return checkinLogService.checkOut(checkRequest.bikeId);
     }
 
     @CrossOrigin(origins = "*")
     @GetMapping("/GetLastLog")
-    // para los parámetros de este método, se requiere usar campos del localStorge,
     public ResponseEntity<String> getLastLog(@RequestParam int userId) {
         return checkinLogService.getLastLog(userId);
     }
