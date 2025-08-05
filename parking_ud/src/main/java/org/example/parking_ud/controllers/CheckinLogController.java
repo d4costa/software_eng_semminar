@@ -17,7 +17,7 @@ public class CheckinLogController {
    @CrossOrigin(origins = "*")
     @PostMapping ("/CheckIn")
     public ResponseEntity<String> CheckIn(@RequestBody CheckRequest checkRequest) {
-      // System.out.println(checkRequest.bikeId +" "+ checkRequest.userId);
+       System.out.println(checkRequest.bikeId +" "+ checkRequest.userId);
         return checkinLogService.checkIn(checkRequest.userId, checkRequest.bikeId,checkRequest.parkingId);
     }
     //@CrossOrigin(origins = "http://localhost:5173")
