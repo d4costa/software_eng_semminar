@@ -9,4 +9,6 @@ public interface BicycleRepository extends JpaRepository<Bicycle, Short> {
 
     // If each user has only one bike:
     Optional<Bicycle> findByUser_id(Integer userId);
+
+    Optional<Bicycle> findByChasisCode(String code);
 }

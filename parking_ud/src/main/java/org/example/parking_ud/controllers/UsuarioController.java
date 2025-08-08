@@ -1,5 +1,6 @@
 package org.example.parking_ud.controllers;
 
+import org.example.parking_ud.dto.ResetPasswordRequest;
 import org.example.parking_ud.dto.UsuarioDto;
 import org.example.parking_ud.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ import org.example.parking_ud.dao.*;
 public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
+
+
+
    public static Usuario clienteObj;
     //@CrossOrigin(origins = "http://localhost:5173")
     @CrossOrigin(origins = "*")
@@ -51,6 +55,22 @@ public class UsuarioController {
     public  Integer cerrar() {
         UsuarioController.clienteObj = null;
         return  1;
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping("/resetpassword")
+    public ResponseEntity<Void> resetPassword(
+            @RequestBody ResetPasswordRequest request
+    ) {
+        boolean success = usuarioService.updatePassword(
+                request.getUserId(),
+                request.getCurrentPassword(),
+                request.getNewPassword()
+        );
+
+        return success
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
 

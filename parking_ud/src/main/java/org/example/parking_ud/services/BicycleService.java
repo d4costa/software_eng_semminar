@@ -27,7 +27,7 @@ public class BicycleService {
                 System.out.println("User not found");
                 return false;
             }
-
+            if (bike.chasisCode.equals("")) return false;
             // Create new bike
             Bicycle newbBike = new Bicycle();
             newbBike.setId((short) (bicycleRepository.count() + 1));

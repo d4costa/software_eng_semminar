@@ -1,4 +1,4 @@
-package org.example.parking_ud;
+package unitTests;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;

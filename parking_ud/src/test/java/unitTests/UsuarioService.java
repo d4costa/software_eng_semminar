@@ -1,4 +1,4 @@
-package org.example.parking_ud;
+package unitTests;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class UsuarioServiceTest {
@@ -22,49 +23,72 @@ class UsuarioServiceTest {
     @Mock private UsuarioRepository usuarioRepository;
     @InjectMocks private UsuarioService usuarioService;
 
+    @Mock
+    private BCryptPasswordEncoder passwordEncoder;
     // Caso: Login exitoso
     @Test
     void login_ValidCredentials_ReturnsUserDto() {
+        // Arrange
         Usuario dbUser = new Usuario();
         dbUser.setEmail("example@email.com");
-        dbUser.setPassword("validPassword");
-        
-        when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.of(dbUser));
-        
+        dbUser.setPassword("validPassword"); // Use passwordHash field
+
+        // Mock repository and encoder
+        when(usuarioRepository.findByEmail(anyString()))
+                .thenReturn(Optional.of(dbUser));
+
+        when(passwordEncoder.matches(anyString(), anyString()))
+                .thenReturn(true); // Simulate password match
+
         Usuario input = new Usuario();
         input.setEmail("example@email.com");
-        input.setPassword("validPassword");
-        
+        input.setPassword("validPassword"); // Raw password
+
+        // Act
         UsuarioDto result = usuarioService.login(input);
+
+        // Assert
         assertNotNull(result);
     }
+
 
     // Caso: Credenciales inválidas
     @Test
     void login_InvalidPassword_ReturnsNull() {
+        // Arrange
         Usuario dbUser = new Usuario();
         dbUser.setEmail("example@email.com");
-        dbUser.setPassword("validPassword");
-        
-        when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.of(dbUser));
-        
+        dbUser.setPassword("hashedPassword");
+
+        when(usuarioRepository.findByEmail(anyString()))
+                .thenReturn(Optional.of(dbUser));
+        when(passwordEncoder.matches(anyString(), anyString()))
+                .thenReturn(false); // Simulate password mismatch
+
         Usuario input = new Usuario();
         input.setPassword("wrongPassword");
         input.setEmail("example@email.com");
-        
+
+        // Act & Assert
         assertNull(usuarioService.login(input));
     }
 
     // Caso: Registro exitoso
     @Test
     void register_ValidUser_ReturnsTrue() {
+        // Arrange
         when(usuarioRepository.count()).thenReturn(5L);
         when(usuarioRepository.save(any())).thenReturn(new Usuario());
-        
+
+        // Mock password encoder
+        when(passwordEncoder.encode(anyString()))
+                .thenReturn("hashedPassword");
+
         Usuario user = new Usuario();
         user.setEmail("test@example.com");
         user.setPassword("password");
-        
+
+        // Act & Assert
         assertTrue(usuarioService.register(user));
     }
 

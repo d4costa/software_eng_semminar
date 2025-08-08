@@ -1,4 +1,4 @@
-package org.example.parking_ud;
+package unitTests;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

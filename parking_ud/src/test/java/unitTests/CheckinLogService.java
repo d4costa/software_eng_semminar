@@ -1,16 +1,13 @@
-package org.example.parking_ud;
+package unitTests;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import java.time.Instant;
 import java.util.Optional;
 
-import org.example.parking_ud.dao.Bicycle;
 import org.example.parking_ud.dao.CheckinLog;
 import org.example.parking_ud.dao.Parking;
-import org.example.parking_ud.dao.Usuario;
 import org.example.parking_ud.repositories.CheckinLogRepository;
 import org.example.parking_ud.repositories.ParkingRepository;
 import org.example.parking_ud.services.CheckinLogService;

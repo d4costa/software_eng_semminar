@@ -39,9 +39,9 @@ public class Usuario {
     @Column(name = "student_id", nullable = false, precision = 11)
     private BigDecimal studentId;
 
-    @Size(max = 50)
+    @Size(max = 60)
     @NotNull
-    @Column(name = "password", nullable = false, length = 50)
+    @Column(name = "password", nullable = false, length = 60)
     private String password;
 
 }

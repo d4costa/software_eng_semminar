@@ -5,6 +5,7 @@ import org.example.parking_ud.dto.UsuarioDto;
 import org.example.parking_ud.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,16 +16,24 @@ public class UsuarioService {
 
     @Autowired
     public UsuarioRepository usuarioRepository;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     public UsuarioDto login(Usuario usuario){
 
         Optional<Usuario> cliente = usuarioRepository.findByEmail(usuario.getEmail());
 
-        if (cliente.isPresent() && usuario.getPassword().equals(cliente.get().getPassword())) {
-
-           Usuario clienteOb = cliente.get();
-            System.out.println(cliente.get().getId());
-            return new UsuarioDto(clienteOb.getId(), clienteOb.getNombre(), clienteOb.getApellido());
-
+        if (cliente.isPresent()) {
+            boolean matches = passwordEncoder.matches(
+                    usuario.getPassword(),                    // raw password from login form
+                    cliente.get().getPassword()               // hashed password from DB
+            );
+            System.out.println(passwordEncoder.encode(usuario.getPassword())+" "+ cliente.get().getPassword());
+            if (matches) {
+                Usuario clienteOb = cliente.get();
+                System.out.println(cliente.get().getId());
+                return new UsuarioDto(clienteOb.getId(), clienteOb.getNombre(), clienteOb.getApellido());
+            }
         }
         return null;
 
@@ -45,7 +54,7 @@ public class UsuarioService {
             clienteObj.setId(((int)usuarioRepository.count())+10001);
             clienteObj.setNombre(usuario.getNombre());
             clienteObj.setApellido(usuario.getApellido());
-            clienteObj.setPassword(usuario.getPassword());
+            clienteObj.setPassword(passwordEncoder.encode(usuario.getPassword()));
             clienteObj.setEmail(usuario.getEmail());
             clienteObj.setStudentId(usuario.getStudentId());
             usuarioRepository.save(clienteObj);
@@ -57,5 +66,36 @@ public class UsuarioService {
             System.out.println(e.getMessage());
             return false;
         }
+    }
+
+    public boolean updatePassword(int userId, String currentPassword, String newPassword) {
+        if (userId <=0  || currentPassword == null || newPassword == null) {
+            return false;
+        }
+
+        Usuario user = usuarioRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return false;
+        }
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            return false;
+        }
+
+        // Validate new password strength
+        if (newPassword.length() < 8) {
+            return false;
+        }
+
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            return false;
+        }
+
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encodedPassword);
+        usuarioRepository.save(user);
+
+        return true;
+
     }
 }
