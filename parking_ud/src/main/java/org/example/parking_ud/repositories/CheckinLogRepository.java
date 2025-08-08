@@ -19,6 +19,7 @@ public interface CheckinLogRepository extends JpaRepository<CheckinLog, Integer>
             "FROM CheckinLog cl " +
             "JOIN cl.bike b " +
             "LEFT JOIN cl.parking p " +
-            "WHERE cl.user.id = :userId")
+            "WHERE cl.user.id = :userId"+
+            " ORDER BY cl.timestamp DESC")
     List<CheckLogDTO> findLogsByUserId(@Param("userId") Integer userId);
 }

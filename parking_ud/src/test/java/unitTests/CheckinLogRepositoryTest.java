@@ -1,5 +1,6 @@
-package org.example.parking_ud;
+package unitTests;
 
+import org.example.parking_ud.ParkingUdApplication;
 import org.example.parking_ud.dao.Bicycle;
 import org.example.parking_ud.dao.CheckinLog;
 import org.example.parking_ud.dao.Parking;
@@ -13,14 +14,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-@DataJpaTest
+
+@SpringBootTest(classes = ParkingUdApplication.class)
 public class CheckinLogRepositoryTest {
 
 
@@ -36,14 +39,13 @@ public class CheckinLogRepositoryTest {
         @Autowired
         private ParkingRepository parkingRepository;
 
-        @Autowired
-        private TestEntityManager entityManager;
+
 
         @Test
         void testFindLogsByUserId() {
             // Create and save user
             Usuario user = new Usuario();
-            user.setId(1);
+            user.setId(11132);
             user.setNombre("Alice");
             user.setApellido("Smith");
             user.setEmail("alice@example.com");
@@ -62,8 +64,9 @@ public class CheckinLogRepositoryTest {
             bicycleRepository.save(bike);
 
             // Create and save parking
+
             Parking parking = new Parking();
-            parking.setId((short) 1);
+            parking.setId((short) 3);
             parking.setParkingName("Main Lot");
             parking.setParkingLocation("Center");
             parking.setAvCapacity((short) 10);
@@ -72,13 +75,13 @@ public class CheckinLogRepositoryTest {
 
             // Create and save checkin log
             CheckinLog log = new CheckinLog();
-            log.setId(1);
+            log.setId(1000);
             log.setUser(user);
             log.setBike(bike);
-            log.setEventType("IN");
+            log.setEventType("check in");
             log.setParking(parking);
             log.setTimestamp(Instant.now());
-            entityManager.persist(log);
+            checkinLogRepository.save(log);
 
             // Run the query
             List<CheckLogDTO> result = checkinLogRepository.findLogsByUserId(user.getId());
@@ -86,9 +89,15 @@ public class CheckinLogRepositoryTest {
             // Assert result
             assertEquals(1, result.size());
             CheckLogDTO dto = result.get(0);
-            assertEquals("IN", dto.eventType);
+            assertEquals("check in", dto.eventType);
             assertEquals("CH123", dto.chasisCode);
             assertEquals("Main Lot", dto.parkingName);
+            checkinLogRepository.delete(log);
+            parkingRepository.delete(parking);
+            bicycleRepository.delete(bike);
+            usuarioRepository.delete(user);
+
+
         }
     }
 

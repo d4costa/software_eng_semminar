@@ -64,13 +64,28 @@ public class UsuarioController {
     ) {
         boolean success = usuarioService.updatePassword(
                 request.getUserId(),
-                request.getCurrentPassword(),
-                request.getNewPassword()
+                request.getPassword1(),
+                request.getPassword2()
         );
 
         return success
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+    @CrossOrigin(origins = "*")
+    @PostMapping("/forgotPassword1")
+    public ResponseEntity<Usuario> getEmail(
+            @RequestBody Usuario usuario
+    ) {
+        Usuario cliente = usuarioService.getUser(usuario);
+
+        if (cliente!=null) {
+
+            return ResponseEntity.ok(cliente); // Retorna ID con status 200
+
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
 

@@ -2,16 +2,16 @@ package org.example.parking_ud.dto;
 
 public class ResetPasswordRequest {
     private int userId;
-    private String currentPassword;
-    private String newPassword;
+    private String password1;
+    private String password2;
 
     // Getters and setters
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
 
-    public String getCurrentPassword() { return currentPassword; }
-    public void setCurrentPassword(String currentPassword) { this.currentPassword = currentPassword; }
+    public String getPassword1() { return password1; }
+    public void setPassword1(String password1) { this.password1 = password1; }
 
-    public String getNewPassword() { return newPassword; }
-    public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
+    public String getPassword2() { return password2; }
+    public void setPassword2(String password2) { this.password2 = password2; }
 }

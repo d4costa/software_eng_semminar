@@ -28,10 +28,10 @@ public class UsuarioService {
                     usuario.getPassword(),                    // raw password from login form
                     cliente.get().getPassword()               // hashed password from DB
             );
-            System.out.println(passwordEncoder.encode(usuario.getPassword())+" "+ cliente.get().getPassword());
+           // System.out.println(passwordEncoder.encode(usuario.getPassword())+" "+ cliente.get().getPassword());
             if (matches) {
                 Usuario clienteOb = cliente.get();
-                System.out.println(cliente.get().getId());
+               // System.out.println(cliente.get().getId());
                 return new UsuarioDto(clienteOb.getId(), clienteOb.getNombre(), clienteOb.getApellido());
             }
         }
@@ -78,16 +78,8 @@ public class UsuarioService {
             return false;
         }
 
-        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-            return false;
-        }
 
-        // Validate new password strength
-        if (newPassword.length() < 8) {
-            return false;
-        }
-
-        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+        if (!currentPassword.equals(newPassword) ){
             return false;
         }
 
@@ -97,5 +89,9 @@ public class UsuarioService {
 
         return true;
 
+    }
+
+    public Usuario getUser(Usuario usuario) {
+        return usuarioRepository.findByEmail(usuario.getEmail()).get();
     }
 }
