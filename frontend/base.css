@@ -28,7 +28,10 @@ body {
   align-items: center;
   border-bottom: 4px solid #ffcc00;
 }
-
+.profile-btn img {
+  width: 40px;
+  height: 40px;
+}
 /* Contenedor logo */
 .logo-container {
   display: flex;
